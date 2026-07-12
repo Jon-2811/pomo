@@ -1,3 +1,4 @@
+import "./desktop.js";
 import "./alerts.js";
 
 const FIREBASE_VERSION = "11.10.0";
