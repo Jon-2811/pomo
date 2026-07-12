@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#dce8e5" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Focus Glass" />
+  <meta name="description" content="落ち着いたLiquid Glassデザインのポモドーロ・集中記録PWA" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+  <link rel="icon" href="./icons/icon-192.png" />
+  <link rel="stylesheet" href="./styles.css" />
+  <title>Focus Glass</title>
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+  <div class="ambient ambient-three"></div>
+
+  <div class="app-shell">
+    <header class="topbar glass-panel">
+      <div class="brand-block">
+        <div class="brand-mark" aria-hidden="true"><span></span></div>
+        <div>
+          <p class="eyebrow">FOCUS GLASS</p>
+          <h1>静かに、ひとつずつ。</h1>
+        </div>
+      </div>
+      <button id="cloudButton" class="status-chip" type="button" aria-label="同期設定を開く">
+        <span class="status-dot"></span>
+        <span id="cloudStatusText">端末保存</span>
+      </button>
+    </header>
+
+    <main>
+      <section id="timerView" class="view active" aria-labelledby="timerTab">
+        <div class="timer-layout">
+          <section class="timer-card glass-panel">
+            <div class="mode-row">
+              <span id="modeBadge" class="mode-badge">集中</span>
+              <span id="cycleLabel" class="cycle-label">1 / 4 セット</span>
+            </div>
+
+            <div id="timerRing" class="timer-ring" style="--progress: 0deg;">
+              <div class="timer-ring-inner">
+                <p id="modeLabel" class="timer-caption">集中時間</p>
+                <p id="mainTime" class="main-time" aria-live="polite">25:00</p>
+                <p id="timerHint" class="timer-hint">準備ができたらスタート</p>
+              </div>
+            </div>
+
+            <div class="main-controls">
+              <button id="resetButton" class="icon-button secondary" type="button" aria-label="リセット" title="リセット">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.9 4.9v4.4h4.4M5.1 9.1A7.5 7.5 0 1 1 4.8 15"/></svg>
+              </button>
+              <button id="startButton" class="primary-button" type="button">
+                <svg id="startIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7z"/></svg>
+                <span id="startButtonText">スタート</span>
+              </button>
+              <button id="skipButton" class="icon-button secondary" type="button" aria-label="終了またはスキップ" title="終了またはスキップ">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 5 9 7-9 7zM18 5v14"/></svg>
+              </button>
+            </div>
+          </section>
+
+          <aside class="side-column">
+            <section id="questionCard" class="question-card glass-panel">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">QUESTION TIMER</p>
+                  <h2>1問ごとの制限時間</h2>
+                </div>
+                <span id="questionCountBadge" class="count-badge">0問</span>
+              </div>
+
+              <div class="question-timer-row">
+                <div>
+                  <p id="questionTime" class="question-time" aria-live="polite">02:00</p>
+                  <p id="questionState" class="subtle-text">集中タイマーとは独立して動きます</p>
+                </div>
+                <div class="duration-stepper" aria-label="問題タイマーの時間設定">
+                  <button id="questionMinus" type="button" aria-label="30秒減らす">−</button>
+                  <span id="questionDurationLabel">2分</span>
+                  <button id="questionPlus" type="button" aria-label="30秒増やす">＋</button>
+                </div>
+              </div>
+
+              <div class="question-actions">
+                <button id="questionStartButton" class="soft-button" type="button">開始</button>
+                <button id="nextQuestionButton" class="soft-button emphasized" type="button">次の問題</button>
+              </div>
+            </section>
+
+            <section class="today-card glass-panel">
+              <div class="section-heading compact">
+                <div>
+                  <p class="eyebrow">TODAY</p>
+                  <h2>今日の積み重ね</h2>
+                </div>
+                <span id="todayDate" class="subtle-text"></span>
+              </div>
+              <div class="summary-grid">
+                <div class="summary-item"><strong id="todayMinutes">0</strong><span>集中分</span></div>
+                <div class="summary-item"><strong id="todaySessions">0</strong><span>セッション</span></div>
+                <div class="summary-item"><strong id="todayQuestions">0</strong><span>問題</span></div>
+              </div>
+            </section>
+          </aside>
+        </div>
+      </section>
+
+      <section id="historyView" class="view" aria-labelledby="historyTab">
+        <div class="page-heading">
+          <div>
+            <p class="eyebrow">INSIGHTS</p>
+            <h2>集中の記録</h2>
+          </div>
+          <button id="refreshHistoryButton" class="soft-button small" type="button">更新</button>
+        </div>
+
+        <div class="stats-grid">
+          <article class="stat-card glass-panel"><span>今日</span><strong id="statToday">0分</strong><small id="statTodaySub">0セッション</small></article>
+          <article class="stat-card glass-panel"><span>今週</span><strong id="statWeek">0分</strong><small>月曜から今日まで</small></article>
+          <article class="stat-card glass-panel"><span>連続日数</span><strong id="statStreak">0日</strong><small>1分以上で記録</small></article>
+        </div>
+
+        <section class="chart-card glass-panel">
+          <div class="section-heading compact">
+            <div>
+              <p class="eyebrow">LAST 14 DAYS</p>
+              <h2>日ごとの集中時間</h2>
+            </div>
+            <span class="subtle-text">単位：分</span>
+          </div>
+          <div id="historyChart" class="history-chart" aria-label="過去14日間の集中時間グラフ"></div>
+        </section>
+
+        <section class="sessions-card glass-panel">
+          <div class="section-heading compact">
+            <div>
+              <p class="eyebrow">SESSIONS</p>
+              <h2>最近のセッション</h2>
+            </div>
+            <button id="clearHistoryButton" class="text-button danger" type="button">端末履歴を削除</button>
+          </div>
+          <div id="sessionList" class="session-list"></div>
+        </section>
+      </section>
+
+      <section id="settingsView" class="view" aria-labelledby="settingsTab">
+        <div class="page-heading">
+          <div>
+            <p class="eyebrow">PREFERENCES</p>
+            <h2>タイマー設定</h2>
+          </div>
+          <span id="settingsSaved" class="saved-label">自動保存</span>
+        </div>
+
+        <div class="settings-layout">
+          <section class="settings-card glass-panel">
+            <div class="section-heading compact">
+              <div><p class="eyebrow">DURATION</p><h2>時間</h2></div>
+            </div>
+            <div class="setting-row">
+              <label for="focusMinutes">集中時間</label>
+              <div class="number-field"><input id="focusMinutes" type="number" min="1" max="180" inputmode="numeric" /><span>分</span></div>
+            </div>
+            <div class="setting-row">
+              <label for="shortBreakMinutes">短い休憩</label>
+              <div class="number-field"><input id="shortBreakMinutes" type="number" min="1" max="60" inputmode="numeric" /><span>分</span></div>
+            </div>
+            <div class="setting-row">
+              <label for="longBreakMinutes">長い休憩</label>
+              <div class="number-field"><input id="longBreakMinutes" type="number" min="1" max="120" inputmode="numeric" /><span>分</span></div>
+            </div>
+            <div class="setting-row">
+              <label for="sessionsBeforeLongBreak">長い休憩まで</label>
+              <div class="number-field"><input id="sessionsBeforeLongBreak" type="number" min="2" max="12" inputmode="numeric" /><span>回</span></div>
+            </div>
+            <div class="setting-row">
+              <label for="questionSeconds">1問の初期設定</label>
+              <div class="number-field"><input id="questionSeconds" type="number" min="10" max="1800" step="10" inputmode="numeric" /><span>秒</span></div>
+            </div>
+          </section>
+
+          <section class="settings-card glass-panel">
+            <div class="section-heading compact">
+              <div><p class="eyebrow">BEHAVIOR</p><h2>動作</h2></div>
+            </div>
+            <label class="toggle-row"><span><strong>休憩を自動開始</strong><small>集中終了後に休憩を始めます</small></span><input id="autoStartBreak" type="checkbox" /><i></i></label>
+            <label class="toggle-row"><span><strong>集中を自動再開</strong><small>休憩終了後に次セットを始めます</small></span><input id="autoStartFocus" type="checkbox" /><i></i></label>
+            <label class="toggle-row"><span><strong>終了音</strong><small>タイマー終了時に穏やかな音を鳴らします</small></span><input id="soundEnabled" type="checkbox" /><i></i></label>
+            <label class="toggle-row"><span><strong>バイブレーション</strong><small>対応端末で短く振動します</small></span><input id="vibrationEnabled" type="checkbox" /><i></i></label>
+            <label class="toggle-row"><span><strong>画面をスリープさせない</strong><small>対応ブラウザで集中中の画面消灯を抑えます</small></span><input id="wakeLockEnabled" type="checkbox" /><i></i></label>
+          </section>
+
+          <section class="settings-card glass-panel cloud-card">
+            <div class="section-heading compact">
+              <div><p class="eyebrow">SYNC</p><h2>複数端末同期</h2></div>
+              <span id="settingsCloudBadge" class="count-badge">未設定</span>
+            </div>
+            <p id="cloudDescription" class="cloud-description">Firebaseを設定すると、iPhone・iPad・PCで同じ履歴と設定を確認できます。設定前は、この端末内に安全に保存されます。</p>
+            <button id="accountButton" class="soft-button emphasized full" type="button">同期を設定</button>
+          </section>
+
+          <section class="settings-card glass-panel install-card">
+            <div class="section-heading compact">
+              <div><p class="eyebrow">INSTALL</p><h2>ホーム画面に追加</h2></div>
+            </div>
+            <p class="cloud-description">iPhoneではSafariの共有ボタンから「ホーム画面に追加」を選ぶと、通常のアプリに近い形で使えます。</p>
+            <button id="installButton" class="soft-button full" type="button">追加方法を表示</button>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav glass-panel" aria-label="メインナビゲーション">
+      <button id="timerTab" class="nav-item active" data-view="timerView" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M9 2h6M12 5v3M17.5 7.5 19 6"/></svg>
+        <span>タイマー</span>
+      </button>
+      <button id="historyTab" class="nav-item" data-view="historyView" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V9M10 19V5M16 19v-7M22 19V3"/></svg>
+        <span>記録</span>
+      </button>
+      <button id="settingsTab" class="nav-item" data-view="settingsView" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21h-4v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H3v-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V3h4v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1v4H21a1.7 1.7 0 0 0-1.6 1z"/></svg>
+        <span>設定</span>
+      </button>
+    </nav>
+  </div>
+
+  <dialog id="accountDialog" class="modal glass-panel">
+    <button class="modal-close" data-close-dialog="accountDialog" type="button" aria-label="閉じる">×</button>
+    <div id="accountDialogContent"></div>
+  </dialog>
+
+  <dialog id="installDialog" class="modal glass-panel">
+    <button class="modal-close" data-close-dialog="installDialog" type="button" aria-label="閉じる">×</button>
+    <p class="eyebrow">INSTALL</p>
+    <h2>iPhoneへの追加方法</h2>
+    <ol class="instruction-list">
+      <li>このページをSafariで開く</li>
+      <li>画面下の共有ボタンをタップ</li>
+      <li>「ホーム画面に追加」を選ぶ</li>
+      <li>右上の「追加」をタップ</li>
+    </ol>
+    <p class="modal-note">ホーム画面から開くと、アドレスバーのないアプリ風表示になります。</p>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="./firebase-config.js"></script>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
