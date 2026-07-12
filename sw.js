@@ -1,4 +1,4 @@
-const CACHE = "focus-glass-v2";
+const CACHE = "focus-glass-v3";
 const ASSETS = [
   "./", "./index.html", "./styles.css", "./app.js", "./alerts.js", "./cloud.js", "./firebase-config.js",
   "./manifest.webmanifest", "./icons/icon-192.png", "./icons/icon-512.png", "./icons/apple-touch-icon.png"
