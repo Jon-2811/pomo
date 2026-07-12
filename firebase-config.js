@@ -1,5 +1,5 @@
 window.FOCUS_GLASS_FIREBASE_CONFIG = {
-  apiKey: "AIzaSyDc4jbJHMAp9nQ-5_dfLcEhzh3zxaUQAXs",
+  apiKey: "AIzaSyDc4jbJHMAp9nQ-5_dfLcEhzh3zxaUQAxs",
   authDomain: "pomo-ac014.firebaseapp.com",
   projectId: "pomo-ac014",
   storageBucket: "pomo-ac014.firebasestorage.app",
